@@ -2,11 +2,11 @@ import sys
 import random
 
 #naive quick sort
-def quick_sort_naive(arr):
+def naive_quick_sort(arr):
     if len(arr) <= 1:
         return arr
     
-    #choose a pivot element (typically the last element in the array)
+    #choose a pivot element: typically the last element in the array
     pivot = arr[-1]
 
     #partition the array into three parts
@@ -14,16 +14,16 @@ def quick_sort_naive(arr):
     left = [x for x in arr[:-1] if x < pivot]
 
     ##elements equal to the pivot
-    middle = [x for x in arr if x == pivot]
+    mid = [x for x in arr if x == pivot]
 
     ##elements greater than the pivot
     right = [x for x in arr[:-1] if x > pivot]
     
     #recursively apply quick sort to the left and right sub-arrays
-    return quick_sort_naive(left) + middle + quick_sort_naive(right)
+    return naive_quick_sort(left) + mid + naive_quick_sort(right)
 
 #ramdomized quick sort
-def quick_sort_randomized(arr):
+def ramdomized_quick_sort(arr):
     if len(arr) <= 1:
         return arr
     
@@ -35,19 +35,20 @@ def quick_sort_randomized(arr):
     left = [x for x in arr if x < pivot]
 
     ##elements equal to the pivot
-    middle = [x for x in arr if x == pivot]
+    mid = [x for x in arr if x == pivot]
 
     ##elements greater than the pivot
     right = [x for x in arr if x > pivot]
 
     #recursively apply quick sort to the left and right sub-arrays
-    return quick_sort_randomized(left) + middle + quick_sort_randomized(right)
+    return ramdomized_quick_sort(left) + mid + ramdomized_quick_sort(right)
 
 #tail-recursive quick sort
-def quick_sort_tail_recursive(arr):
-    def _quick_sort(arr, low, high):
+def tail_resusive_quick_sort(arr):
+    def quick_sort(arr, low, high):
         if low < high:
-            #choose a pivot element (typically the first element in the array)
+
+            #choose a pivot element: typically the first element in the array
             pivot = arr[low]
             
             #partition the array into elements less than and greater than the pivot
@@ -66,13 +67,14 @@ def quick_sort_tail_recursive(arr):
             arr[low], arr[right] = arr[right], arr[low]
             
             #recursively apply quick sort to the smaller partition first
-            _quick_sort(arr, low, right - 1)
+            quick_sort(arr, low, right - 1)
+
             #use tail call optimization to sort the larger partition without accumulating call stack
-            _quick_sort(arr, right + 1, high)
+            quick_sort(arr, right + 1, high)
         
         return arr
 
-    return _quick_sort(arr, 0, len(arr) - 1)
+    return quick_sort(arr, 0, len(arr) - 1)
 
 #open file
 input = open(sys.argv[1],"r")
@@ -84,9 +86,9 @@ arr_random = arr_naive.copy()
 arr_tail = arr_naive.copy()
 
 #run sort
-arr_naive = quick_sort_naive(arr_naive)
-arr_random = quick_sort_randomized(arr_random)
-arr_tail = quick_sort_tail_recursive(arr_tail)
+arr_naive = naive_quick_sort(arr_naive)
+arr_random = ramdomized_quick_sort(arr_random)
+arr_tail = tail_resusive_quick_sort(arr_tail)
 
 #write file
 output.write(' '.join(list(map(str, arr_naive))) + '\n')
