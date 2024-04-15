@@ -3,25 +3,20 @@ import random
 
 #naive quick sort
 def naive_quick_sort(arr):
-    if len(arr) <= 1:
+    if len(arr) < 2:
         return arr
     
     #choose a pivot element: typically the last element in the array
     pivot = arr[-1]
+    mid = 0
 
-    #partition the array into three parts
-    ##elements less than the pivot
-    left = [x for x in arr[:-1] if x < pivot]
+    for i in range(0, len(arr)-1):
+        if arr[i] <= pivot:
+            arr[mid], arr[i] = arr[i], arr[mid]
+            mid += 1
 
-    ##elements equal to the pivot
-    mid = [x for x in arr if x == pivot]
-
-    ##elements greater than the pivot
-    right = [x for x in arr[:-1] if x > pivot]
-    
     #recursively apply quick sort to the left and right sub-arrays
-    return naive_quick_sort(left) + mid + naive_quick_sort(right)
-
+    return naive_quick_sort(arr[:mid]) + [pivot] + naive_quick_sort(arr[mid:-1])
 
 #ramdomized quick sort
 def ramdomized_quick_sort(arr):
