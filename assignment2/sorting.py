@@ -2,57 +2,64 @@ import sys
 import random
 
 #naive quick sort
-def naive_quick_sort(arr):
-    if len(arr) < 2:
-        return arr
+def naive_quick_sort(arr, str, end):
+    if end-str+1 < 2:
+        return
     
     #choose a pivot element: typically the last element in the array
-    pivot = arr[-1]
+    pivot = arr[end]
     #position fot pivot after loop
-    mid = 0
+    mid = str
 
-    for i in range(0, len(arr)-1):
+    for i in range(str, end):
         #If element is smaller than pivot, change position
         if arr[i] <= pivot:
             arr[mid], arr[i] = arr[i], arr[mid]
             mid += 1
 
+    arr[mid], arr[end] = arr[end], arr[mid]
+
     #recursively apply quick sort to the left and right sub-arrays
-    return naive_quick_sort(arr[:mid]) + [pivot] + naive_quick_sort(arr[mid:-1])
+    naive_quick_sort(arr, str, mid-1)
+    naive_quick_sort(arr, mid+1, end)
 
 #randomized quick sort
-def randomized_quick_sort(arr):
-    if len(arr) < 2:
-        return arr
+def randomized_quick_sort(arr, str, end):
+    if end-str+1 < 2:
+        return
     #if there are 2 lengths naive quick sort
-    if len(arr) == 2:
-        return naive_quick_sort(arr);
+    if end-str+1 == 2:
+        naive_quick_sort(arr, str, end);
+        return
     
     #pick 3 random indices
-    median_index = -1
-    random_indexs = random.sample(range(0,len(arr)),3);
+    median_index = end
+    random_indexs = random.sample(range(str, end+1), 3)
     #sort to get median
-    random_values_sorted = naive_quick_sort([arr[random_indexs[0]],arr[random_indexs[1]], arr[random_indexs[2]]])
+    random_values = [arr[random_indexs[0]], arr[random_indexs[1]], arr[random_indexs[2]]]
+    naive_quick_sort(random_values, 0, 2)
     #get median value index
     for i in random_indexs:
-        if arr[i] == random_values_sorted[1]:
+        if arr[i] == random_values[1]:
             median_index = i
 
     #change last value and random value
-    arr[-1], arr[median_index] = arr[median_index], arr[-1]
-    pivot = arr[-1]
+    arr[end], arr[median_index] = arr[median_index], arr[end]
+    pivot = arr[end]
     #position fot pivot after loop
-    mid = 0
+    mid = str
 
-    for i in range(0, len(arr)-1):
+    for i in range(str, end):
         #If element is smaller than pivot, change position
         if arr[i] <= pivot:
             arr[mid], arr[i] = arr[i], arr[mid]
             mid += 1
 
-    #recursively apply quick sort to the left and right sub-arrays
-    return randomized_quick_sort(arr[:mid]) + [pivot] + randomized_quick_sort(arr[mid:-1])
+    arr[mid], arr[end] = arr[end], arr[mid]
 
+    #recursively apply quick sort to the left and right sub-arrays
+    randomized_quick_sort(arr, str, mid-1)
+    randomized_quick_sort(arr, mid+1, end)
 
 #tail-recursive quick sort
 ##sub tail-recursive quick sort
@@ -101,8 +108,8 @@ arr_random = arr_naive.copy()
 arr_tail = arr_naive.copy()
 
 #run sort
-arr_naive = naive_quick_sort(arr_naive)
-arr_random = randomized_quick_sort(arr_random)
+naive_quick_sort(arr_naive, 0, length-1)
+randomized_quick_sort(arr_random, 0, length-1)
 arr_tail = tail_resusive_quick_sort(arr_tail)
 
 #write file
