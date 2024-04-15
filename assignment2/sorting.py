@@ -66,10 +66,10 @@ def tail_resusive_quick_sort(arr):
                     arr[left], arr[right] = arr[right], arr[left]
             arr[low], arr[right] = arr[right], arr[low]
             
-            #recursively apply quick sort to the smaller partition first
+            #tail-recursively apply quick sort to the smaller partition
             quick_sort(arr, low, right - 1)
 
-            #use tail call optimization to sort the larger partition without accumulating call stack
+            #tail-recursively apply quick sort to the larger partition
             quick_sort(arr, right + 1, high)
         
         return arr
