@@ -8,6 +8,30 @@ def naive_quick_sort(arr):
     
     #choose a pivot element: typically the last element in the array
     pivot = arr[-1]
+    #position fot pivot after loop
+    mid = 0
+
+    for i in range(0, len(arr)-1):
+        #If element is smaller than pivot, change position
+        if arr[i] <= pivot:
+            arr[mid], arr[i] = arr[i], arr[mid]
+            mid += 1
+
+    #recursively apply quick sort to the left and right sub-arrays
+    return naive_quick_sort(arr[:mid]) + [pivot] + naive_quick_sort(arr[mid:-1])
+
+#randomized quick sort
+def randomized_quick_sort(arr):
+    if len(arr) < 2:
+        return arr
+    if len(arr) == 2:
+        return naive_quick_sort(arr);
+    
+    random_indexs = random.sample(range(0,len(arr)),3);
+    random_indexs = naive_quick_sort(random_indexs)
+
+    arr[-1], arr[random_indexs[1]] = arr[random_indexs[1]], arr[-1]
+    pivot = arr[-1]
     mid = 0
 
     for i in range(0, len(arr)-1):
@@ -16,28 +40,7 @@ def naive_quick_sort(arr):
             mid += 1
 
     #recursively apply quick sort to the left and right sub-arrays
-    return naive_quick_sort(arr[:mid]) + [pivot] + naive_quick_sort(arr[mid:-1])
-
-#ramdomized quick sort
-def ramdomized_quick_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    
-    #choose a pivot element randomly from the array.
-    pivot = random.choice(arr) 
-
-    #partition the array into three parts
-    ##elements less than the pivot
-    left = [x for x in arr if x < pivot]
-
-    ##elements equal to the pivot
-    mid = [x for x in arr if x == pivot]
-
-    ##elements greater than the pivot
-    right = [x for x in arr if x > pivot]
-
-    #recursively apply quick sort to the left and right sub-arrays
-    return ramdomized_quick_sort(left) + mid + ramdomized_quick_sort(right)
+    return randomized_quick_sort(arr[:mid]) + [pivot] + randomized_quick_sort(arr[mid:-1])
 
 
 #tail-recursive quick sort
@@ -88,7 +91,7 @@ arr_tail = arr_naive.copy()
 
 #run sort
 arr_naive = naive_quick_sort(arr_naive)
-arr_random = ramdomized_quick_sort(arr_random)
+arr_random = randomized_quick_sort(arr_random)
 arr_tail = tail_resusive_quick_sort(arr_tail)
 
 #write file
