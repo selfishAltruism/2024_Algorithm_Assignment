@@ -33,7 +33,7 @@ def randomized_quick_sort(arr, str, end):
         return
     
     #pick 3 random indices
-    median_index = end
+    median_index = end-1
     random_indexs = random.sample(range(str, end+1), 3)
     #sort to get median
     random_values = [arr[random_indexs[0]], arr[random_indexs[1]], arr[random_indexs[2]]]
