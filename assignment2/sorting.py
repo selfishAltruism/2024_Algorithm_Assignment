@@ -24,17 +24,28 @@ def naive_quick_sort(arr):
 def randomized_quick_sort(arr):
     if len(arr) < 2:
         return arr
+    #if there are 2 lengths naive quick sort
     if len(arr) == 2:
         return naive_quick_sort(arr);
     
+    #pick 3 random indices
+    median_index = -1
     random_indexs = random.sample(range(0,len(arr)),3);
-    random_indexs = naive_quick_sort(random_indexs)
+    #sort to get median
+    random_values_sorted = naive_quick_sort([arr[random_indexs[0]],arr[random_indexs[1]], arr[random_indexs[2]]])
+    #get median value index
+    for i in random_indexs:
+        if arr[i] == random_values_sorted[1]:
+            median_index = i
 
-    arr[-1], arr[random_indexs[1]] = arr[random_indexs[1]], arr[-1]
+    #change last value and random value
+    arr[-1], arr[median_index] = arr[median_index], arr[-1]
     pivot = arr[-1]
+    #position fot pivot after loop
     mid = 0
 
     for i in range(0, len(arr)-1):
+        #If element is smaller than pivot, change position
         if arr[i] <= pivot:
             arr[mid], arr[i] = arr[i], arr[mid]
             mid += 1
