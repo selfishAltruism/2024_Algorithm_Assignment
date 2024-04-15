@@ -22,6 +22,7 @@ def naive_quick_sort(arr):
     #recursively apply quick sort to the left and right sub-arrays
     return naive_quick_sort(left) + mid + naive_quick_sort(right)
 
+
 #ramdomized quick sort
 def ramdomized_quick_sort(arr):
     if len(arr) <= 1:
@@ -43,38 +44,43 @@ def ramdomized_quick_sort(arr):
     #recursively apply quick sort to the left and right sub-arrays
     return ramdomized_quick_sort(left) + mid + ramdomized_quick_sort(right)
 
+
 #tail-recursive quick sort
-def tail_resusive_quick_sort(arr):
-    def quick_sort(arr, low, high):
-        if low < high:
+##sub tail-recursive quick sort
+def sub_tail_resusive_quick_sort(arr, low, high):
+    if low < high:
 
-            #choose a pivot element: typically the first element in the array
-            pivot = arr[low]
+        #choose a pivot element: typically the first element in the array
+        pivot = arr[low]
             
-            #partition the array into elements less than and greater than the pivot
-            left = low + 1
-            right = high
-            done = False
-            while not done:
-                while left <= right and arr[left] <= pivot:
-                    left = left + 1
-                while arr[right] >= pivot and right >= left:
-                    right = right - 1
-                if right < left:
-                    done = True
-                else:
-                    arr[left], arr[right] = arr[right], arr[left]
-            arr[low], arr[right] = arr[right], arr[low]
+        #partition the array into elements less than and greater than the pivot
+        left = low + 1
+        right = high
+        done = False
+        while not done:
+            while left <= right and arr[left] <= pivot:
+                left = left + 1
+            while arr[right] >= pivot and right >= left:
+                right = right - 1
+            if right < left:
+                done = True
+            else:
+                arr[left], arr[right] = arr[right], arr[left]
+        arr[low], arr[right] = arr[right], arr[low]
             
-            #tail-recursively apply quick sort to the smaller partition
-            quick_sort(arr, low, right - 1)
+        #tail-recursively apply quick sort to the smaller partition
+        sub_tail_resusive_quick_sort(arr, low, right - 1)
 
-            #tail-recursively apply quick sort to the larger partition
-            quick_sort(arr, right + 1, high)
+        #tail-recursively apply quick sort to the larger partition
+        sub_tail_resusive_quick_sort(arr, right + 1, high)
         
-        return arr
+    return arr
 
-    return quick_sort(arr, 0, len(arr) - 1)
+##main tail-recursive quick sort
+def tail_resusive_quick_sort(arr):
+    #call sub tail-recursive quick sort 
+    return sub_tail_resusive_quick_sort(arr, 0, len(arr) - 1)
+
 
 #open file
 input = open(sys.argv[1],"r")
