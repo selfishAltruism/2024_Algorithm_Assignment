@@ -5,7 +5,6 @@
 - Insertion sort
 - Merge sort
 - Merge + insertion sort
-
 - Naive quick sort
 - Median-of-3 randomized quick sort
 - Tail-recursive quick sort
