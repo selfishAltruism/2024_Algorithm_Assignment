@@ -1,2 +1,2 @@
-run: sorting.py
-	python3 sorting.py input.txt output.txt
+run: lcs.py
+	python3 lcs.py input.txt output.txt
