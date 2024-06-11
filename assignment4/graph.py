@@ -21,7 +21,8 @@ output_sp = open(sys.argv[3],"w")
 output_mst = open(sys.argv[4],"w")
 
 #mst
-num_vertices, num_edges, start_vertex_id = map(int, input_mst.readline().split('\t'))
+line = input_mst.readline().strip()
+num_vertices, num_edges, start_vertex_id = map(int, line.split())
 
 graph_mst = defaultdict(list)
 vertices_mst = {}
@@ -31,7 +32,7 @@ while True:
     line = input_mst.readline().strip()
     if not line: 
         break
-    u, v, weight = map(int, line.split('\t'))
+    u, v, weight = map(int, line.split())
 
     #because of undirected graph
     graph_mst[u].append((v, weight))
@@ -42,9 +43,6 @@ while True:
         vertices_mst[u] = Vertex(u)
     if v not in vertices_mst:
         vertices_mst[v] = Vertex(v)
-
-
-
 
 #close file
 input_sp.close()
