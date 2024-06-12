@@ -3,13 +3,13 @@ from collections import defaultdict
 import heapq
 
 #const
-BIG_NUM = 100
+INF = float('inf')
 
 #class
 class Vertex:
     def __init__(self, vertex_id):
         self.id = vertex_id
-        self.key = BIG_NUM
+        self.key = INF
         self.before = "NIL"
 
     def __lt__(self, other):
@@ -60,6 +60,8 @@ input_mst = open(sys.argv[2],"r")
 output_sp = open(sys.argv[3],"w")
 output_mst = open(sys.argv[4],"w")
 
+#MST#
+
 #set mst
 line = input_mst.readline().strip()
 num_vertices, num_edges, start_vertex_id = map(int, line.split())
@@ -94,7 +96,6 @@ for vertex_id in range(9):
 pq_mst.decrease_key(vertices_mst[start_vertex_id], 0)
 vertices_mst[start_vertex_id].key = 0
 
-
 while pq_mst.heap:
     vertex = pq_mst.pop_vertex()
     for adjacent_vertex_id, weight in graph_mst[vertex.id]:
@@ -105,6 +106,55 @@ while pq_mst.heap:
 
 for vertex_id in range(9):
     output_mst.write(str(vertices_mst[vertex_id].id) + '\t' + str(vertices_mst[vertex_id].before) + '\n')
+
+
+#SP#
+
+line = input_sp.readline().strip()
+num_vertices = int(line)
+
+#initial value settings shortest-path weight matrix, predecessor matrix
+D = [[[INF for _ in range(num_vertices)] for _ in range(num_vertices)] for _ in range(num_vertices)]
+P = [[["NIL" for _ in range(num_vertices)] for _ in range(num_vertices)] for _ in range(num_vertices)]
+
+#setting W
+row_index = 0
+while True:
+    #remove \n
+    line = input_sp.readline().strip()
+    if not line: 
+        break
+    line_array = line.split()
+    for col_index in range(num_vertices):
+        if line_array[col_index] == 'INF': 
+            D[0][row_index][col_index] = INF
+        else:
+            D[0][row_index][col_index] = int(line_array[col_index])
+
+            #apply in predecessor matrix
+            if int(line_array[col_index]) != 0:
+                P[0][row_index][col_index] = row_index + 1
+
+    row_index = row_index + 1
+
+
+
+def print_3d_array(array, name):
+    depth = len(array)
+    rows = len(array[0])
+    cols = len(array[0][0])
+
+    for k in range(depth):
+        print(f"{name}[{k}]:")
+        for i in range(rows):
+            print(array[k][i])
+        print()  # 각 depth 구분을 위해 빈 줄 출력
+
+# 최종 결과 출력
+print_3d_array(D, "D")
+print_3d_array(P, "P")
+
+
 
 #close file
 input_sp.close()
