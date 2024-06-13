@@ -54,6 +54,34 @@ class priority_queue:
         vertex.key = new_key
         self.add_vertex(vertex)
 
+#floyd warshall
+def floyd_warshall(graph):
+    n = len(graph)
+    dist = [[float('inf')] * n for _ in range(n)]
+    pred = [[-1] * n for _ in range(n)]
+
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                dist[i][j] = 0
+            elif graph[i][j] != float('inf'):
+                dist[i][j] = graph[i][j]
+                pred[i][j] = i
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][j] > dist[i][k] + dist[k][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+                    pred[i][j] = pred[k][j]
+
+    for i in range(n):
+        for j in range(n):
+            if i != j and pred[i][j] != -1:
+                pred[i][j] = pred[pred[i][j]][j]
+
+    return dist, pred
+
 #open file
 input_sp = open(sys.argv[1],"r")
 input_mst = open(sys.argv[2],"r")
@@ -104,55 +132,32 @@ while pq_mst.heap:
                 vertices_mst[adjacent_vertex_id].before = vertex.id
                 pq_mst.decrease_key(vertices_mst[adjacent_vertex_id], weight)
 
+#write file
 for vertex_id in range(9):
     output_mst.write(str(vertices_mst[vertex_id].id) + '\t' + str(vertices_mst[vertex_id].before) + '\n')
 
 
 #SP#
 
-line = input_sp.readline().strip()
-num_vertices = int(line)
+#set sp
+vertex_num_sp = int(input_sp.readline().strip())
+graph = []
+for _ in range(vertex_num_sp):
+    row = input_sp.readline().strip().split()
+    row = [float('inf') if x == 'INF' else int(x) for x in row]
+    graph.append(row)
 
-#initial value settings shortest-path weight matrix, predecessor matrix
-D = [[[INF for _ in range(num_vertices)] for _ in range(num_vertices)] for _ in range(num_vertices)]
-P = [[["NIL" for _ in range(num_vertices)] for _ in range(num_vertices)] for _ in range(num_vertices)]
+dist, pred = floyd_warshall(graph)
 
-#setting W
-row_index = 0
-while True:
-    #remove \n
-    line = input_sp.readline().strip()
-    if not line: 
-        break
-    line_array = line.split()
-    for col_index in range(num_vertices):
-        if line_array[col_index] == 'INF': 
-            D[0][row_index][col_index] = INF
-        else:
-            D[0][row_index][col_index] = int(line_array[col_index])
-
-            #apply in predecessor matrix
-            if int(line_array[col_index]) != 0:
-                P[0][row_index][col_index] = row_index + 1
-
-    row_index = row_index + 1
-
-
-
-def print_3d_array(array, name):
-    depth = len(array)
-    rows = len(array[0])
-    cols = len(array[0][0])
-
-    for k in range(depth):
-        print(f"{name}[{k}]:")
-        for i in range(rows):
-            print(array[k][i])
-        print()  # 각 depth 구분을 위해 빈 줄 출력
-
-# 최종 결과 출력
-print_3d_array(D, "D")
-print_3d_array(P, "P")
+#write file
+n = len(dist)
+output_sp.write(f"D\t{n}\n")
+for i in range(n):
+    output_sp.write("\t".join(map(str, dist[i])) + "\n")
+    
+output_sp.write(f"P\t{n}\n")
+for i in range(n):
+    output_sp.write("\t".join(map(lambda x: 'NIL' if x == -1 else str(x + 1), pred[i])) + "\n")
 
 
 
