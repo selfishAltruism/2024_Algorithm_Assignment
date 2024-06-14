@@ -19,11 +19,40 @@ class Vertex:
     def __repr__(self):
         return f"Vertex(id={self.id}, key={self.key}, before={self.before})"
 
-#implement priority queue to class (with heapq library)
+#implement priority queue to class
 class priority_queue:
     def __init__(self):
         self.heap = []
         self.entry_finder = {}
+
+    #maintain the heap structure
+    def _heapify(self, idx):
+        smallest = idx
+        left = 2 * idx + 1
+        right = 2 * idx + 2
+
+        #check if the left child exists and is smaller than the current element
+        if left < len(self.heap) and self.heap[left][0] < self.heap[smallest][0]:
+            smallest = left
+
+        #check if the right child exists and is smaller than the current element
+        if right < len(self.heap) and self.heap[right][0] < self.heap[smallest][0]:
+            smallest = right
+
+        #if the smallest element is not the current element, swap and continue heapifying
+        if smallest != idx:
+            self.heap[idx], self.heap[smallest] = self.heap[smallest], self.heap[idx]
+            self._heapify(smallest)
+
+    #new element is added to the heap
+    def _sift_up(self, idx):
+        parent = (idx - 1) // 2
+
+        #while the element is not at the root and it is smaller than its parent, swap it with the parent
+        while idx > 0 and self.heap[idx][0] < self.heap[parent][0]:
+            self.heap[idx], self.heap[parent] = self.heap[parent], self.heap[idx]
+            idx = parent
+            parent = (idx - 1) // 2
 
     #put vertex in queue
     def add_vertex(self, vertex):
@@ -31,36 +60,34 @@ class priority_queue:
             self.remove_vertex(vertex)
         entry = [vertex.key, vertex]
         self.entry_finder[vertex.id] = entry
-        heapq.heappush(self.heap, entry)
+        self.heap.append(entry)
+        self._sift_up(len(self.heap) - 1)
 
     #remove vertex in queue (used at key update)
     def remove_vertex(self, vertex):
-        entry = self.entry_finder.pop(vertex.id)
-        entry[-1] = None
-        self.__rebuild_heap()
-
-    def __rebuild_heap(self):
-        self.heap = [entry for entry in self.heap if entry[-1] is not None]
-        heapq.heapify(self.heap)
+        idx = self.heap.index(self.entry_finder.pop(vertex.id))
+        last_entry = self.heap.pop()
+        if idx < len(self.heap):
+            self.heap[idx] = last_entry
+            if self.heap[idx][0] < last_entry[0]:
+                self._sift_up(idx)
+            else:
+                self._heapify(idx)
 
     #pop vertex in queue
     def pop_vertex(self):
-        while self.heap:
-            #use heapq library
-            entry = heapq.heappop(self.heap)
-            vertex = entry[-1]
-            if vertex is not None:
-                del self.entry_finder[vertex.id]
-                return vertex
-        #empty priority error
-        raise KeyError("pop from an empty priority queue")
+        if not self.heap:
+            raise KeyError("pop from an empty priority queue")
+        smallest = self.heap[0]
+        self.remove_vertex(smallest[1])
+        return smallest[1]
 
     #vertex key update
     def decrease_key(self, vertex, new_key):
-        #remove
+        #remove vertex
         self.remove_vertex(vertex)
         vertex.key = new_key
-        #add
+        #add vertex
         self.add_vertex(vertex)
 
 #floyd warshall
