@@ -1,6 +1,5 @@
 import sys
 from collections import defaultdict
-import heapq
 
 #const
 INF = float('inf')
@@ -20,7 +19,7 @@ class Vertex:
         return f"Vertex(id={self.id}, key={self.key}, before={self.before})"
 
 #implement priority queue to class
-class priority_queue:
+class Priority_queue:
     def __init__(self):
         self.heap = []
         self.entry_finder = {}
@@ -135,7 +134,7 @@ num_vertices, num_edges, start_vertex_id = map(int, line.split())
 
 graph_mst = defaultdict(list)
 vertices_mst = {}
-pq_mst = priority_queue()
+pq_mst = Priority_queue()
 
 #initial value settings vertex, graph
 #push in priority queue
