@@ -5,10 +5,11 @@ import heapq
 #const
 INF = float('inf')
 
-#class
+#define vertex class
 class Vertex:
     def __init__(self, vertex_id):
         self.id = vertex_id
+        #setting vertex initial value
         self.key = INF
         self.before = "NIL"
 
@@ -18,12 +19,13 @@ class Vertex:
     def __repr__(self):
         return f"Vertex(id={self.id}, key={self.key}, before={self.before})"
 
-#implement priority queue
+#implement priority queue to class (with heapq library)
 class priority_queue:
     def __init__(self):
         self.heap = []
         self.entry_finder = {}
 
+    #put vertex in queue
     def add_vertex(self, vertex):
         if vertex.id in self.entry_finder:
             self.remove_vertex(vertex)
@@ -31,6 +33,7 @@ class priority_queue:
         self.entry_finder[vertex.id] = entry
         heapq.heappush(self.heap, entry)
 
+    #remove vertex in queue (used at key update)
     def remove_vertex(self, vertex):
         entry = self.entry_finder.pop(vertex.id)
         entry[-1] = None
@@ -40,34 +43,44 @@ class priority_queue:
         self.heap = [entry for entry in self.heap if entry[-1] is not None]
         heapq.heapify(self.heap)
 
+    #pop vertex in queue
     def pop_vertex(self):
         while self.heap:
+            #use heapq library
             entry = heapq.heappop(self.heap)
             vertex = entry[-1]
             if vertex is not None:
                 del self.entry_finder[vertex.id]
                 return vertex
+        #empty priority error
         raise KeyError("pop from an empty priority queue")
 
+    #vertex key update
     def decrease_key(self, vertex, new_key):
+        #remove
         self.remove_vertex(vertex)
         vertex.key = new_key
+        #add
         self.add_vertex(vertex)
 
 #floyd warshall
 def floyd_warshall(graph):
+    #define matrix
     n = len(graph)
-    dist = [[float('inf')] * n for _ in range(n)]
+    dist = [[INF] * n for _ in range(n)]
     pred = [[-1] * n for _ in range(n)]
 
+    #set W (1st dist, pred matrix)
     for i in range(n):
         for j in range(n):
             if i == j:
                 dist[i][j] = 0
-            elif graph[i][j] != float('inf'):
+            #if vertexs connect
+            elif graph[i][j] != INF:
                 dist[i][j] = graph[i][j]
                 pred[i][j] = i
 
+    #determine the next dist, pred matrix based on the results of the previous loop
     for k in range(n):
         for i in range(n):
             for j in range(n):
@@ -89,7 +102,6 @@ output_sp = open(sys.argv[3],"w")
 output_mst = open(sys.argv[4],"w")
 
 #MST#
-
 #set mst
 line = input_mst.readline().strip()
 num_vertices, num_edges, start_vertex_id = map(int, line.split())
@@ -122,14 +134,18 @@ for vertex_id in range(9):
     pq_mst.add_vertex(vertices_mst[vertex_id])
 
 pq_mst.decrease_key(vertices_mst[start_vertex_id], 0)
+#set start vertex
 vertices_mst[start_vertex_id].key = 0
 
 while pq_mst.heap:
+    #pop target vertex from queue
     vertex = pq_mst.pop_vertex()
+    #get adjacent vertex 
     for adjacent_vertex_id, weight in graph_mst[vertex.id]:
         if adjacent_vertex_id in pq_mst.entry_finder and weight < vertices_mst[adjacent_vertex_id].key:
                 vertices_mst[adjacent_vertex_id].key = weight
                 vertices_mst[adjacent_vertex_id].before = vertex.id
+                #update vertex key in queue
                 pq_mst.decrease_key(vertices_mst[adjacent_vertex_id], weight)
 
 #write file
@@ -138,7 +154,6 @@ for vertex_id in range(9):
 
 
 #SP#
-
 #set sp
 vertex_num_sp = int(input_sp.readline().strip())
 graph = []
